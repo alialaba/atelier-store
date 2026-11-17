@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { PlusIcon } from "@/components/icons";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ProductCard } from "@/components/product/product-card";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { PurchasePanel } from "@/components/product/purchase-panel";
@@ -108,21 +108,9 @@ async function ProductDetails({ params }: Pick<PageProps<"/products/[slug]">, "p
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="container-page py-4">
-        <ol className="flex flex-wrap items-center gap-2 type-caption text-ink-subtle uppercase">
-          <li>
-            <Link href="/" className="link-reveal">
-              Home
-            </Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li>{product.category}</li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page" className="text-ink">
-            {product.name}
-          </li>
-        </ol>
-      </nav>
+      <Breadcrumbs
+        items={[{ label: "Home", href: "/" }, { label: product.category }, { label: product.name }]}
+      />
 
       <div className={detailGrid}>
         <div className="lg:sticky lg:top-[calc(var(--header-height)+1rem)] lg:self-start">

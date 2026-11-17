@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-Early scaffold for an ecommerce app: Next.js 16 (App Router, Turbopack) + TypeScript + Tailwind v4 + Better Auth + Drizzle ORM on Neon Postgres. Integrations are wired up. The homepage, product detail pages (`/products/[slug]`) and a product quick view read the catalog (categories, products, per-size stock) from Postgres, and a client-only bag (localStorage) counts added items. There is no bag/checkout page, no category listing pages, no auth flows (no sign-in methods enabled), no auth tables and no payments yet; category and footer links 404 for now. There is no test framework configured.
+Early scaffold for an ecommerce app: Next.js 16 (App Router, Turbopack) + TypeScript + Tailwind v4 + Better Auth + Drizzle ORM on Neon Postgres. Integrations are wired up. The homepage, a new arrivals listing (`/new-arrivals`), product detail pages (`/products/[slug]`) and a product quick view read the catalog (categories, products, per-size stock) from Postgres, and a client-only bag (localStorage) counts added items. There is no bag/checkout page, no category listing pages, no auth flows (no sign-in methods enabled), no auth tables and no payments yet; category and footer links 404 for now. There is no test framework configured.
 
 ## Commands
 
@@ -67,6 +67,7 @@ Defined in `src/app/globals.css` (Tailwind v4, CSS-first; there is no `tailwind.
 - With `cacheComponents` + `partialPrefetching`, Next keeps the previous page mounted but hidden after navigation: client components must undo global side effects in effect cleanups (the quick view closes its dialog on unmount, otherwise `html:has(dialog[open])` keeps the next page scroll-locked). Pages that read `params` must do so inside `<Suspense>` (see `/products/[slug]`), or dev reports an instant-navigation error.
 - `src/components/layout/site-header.tsx` (client) and `site-footer.tsx` are rendered by the root layout. The header is fixed: transparent over the hero on `/`, solid elsewhere, so **every other page must offset its first section with `pt-header`**.
 - Homepage sections live in `src/components/home/`; `ProductCard` is in `src/components/product/`.
+- Listing pages (e.g. `/new-arrivals`) follow one pattern: `pt-header` main, `Breadcrumbs` (`src/components/layout/breadcrumbs.tsx`, last crumb is the current page), an eyebrow + `type-h1` header with a count, then `ProductCard`s in `<Container size="bleed"><Grid cols={4}>`. Fetch with a cached `src/lib/data` function, and include an empty state.
 - Remote images must be allowed in `next.config.ts` `images.remotePatterns`. Use the object form; a `new URL()` pattern rejects URLs with query strings. Next 16 requires `images.qualities` (only `75` is allowed) and replaces `priority` with `preload`.
 
 ## Conventions
