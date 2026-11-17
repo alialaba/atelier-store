@@ -1,26 +1,598 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Atelier design system
+ *
+ * Monochrome, square-edged and type-led. Product imagery carries the colour;
+ * the interface stays black, white and grey. Tokens below replace Tailwind's
+ * default colour, type and radius scales so off-system values fail loudly.
+ */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ------------------------------------------------------------------ */
+/* Tokens                                                             */
+/* ------------------------------------------------------------------ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  /* Colour: reset the default palette, then define a restrained one. */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-ink: #000000; /* primary text, solid buttons, strong borders */
+  --color-ink-muted: #555555; /* secondary text */
+  --color-ink-subtle: #767676; /* tertiary text, placeholders (AA on white) */
+  --color-ink-disabled: #a1a1a1;
+
+  --color-canvas: #ffffff; /* page background */
+  --color-surface: #f5f5f5; /* panels, drawers, banded sections */
+  --color-well: #fafafa; /* product image background */
+  --color-scrim: rgb(0 0 0 / 0.4); /* overlay behind modals */
+
+  --color-line: #d8d8d8; /* default divider */
+  --color-line-faint: rgb(0 0 0 / 0.12); /* hairlines on imagery/surfaces */
+  --color-line-strong: #000000; /* outlined controls */
+
+  --color-success: #1f7a5c;
+  --color-danger: #b3261e;
+
+  /* Typography: one sans family, tight tracking, uppercase for titles. */
+  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-*: initial;
+  --text-2xs: 0.625rem; /* 10 */
+  --text-2xs--line-height: 0.75rem;
+  --text-2xs--letter-spacing: 0;
+  --text-xs: 0.75rem; /* 12 */
+  --text-xs--line-height: 1rem;
+  --text-xs--letter-spacing: -0.01em;
+  --text-sm: 0.875rem; /* 14 */
+  --text-sm--line-height: 1.25rem;
+  --text-sm--letter-spacing: -0.01em;
+  --text-base: 1rem; /* 16 */
+  --text-base--line-height: 1.5rem;
+  --text-base--letter-spacing: -0.02em;
+  --text-lg: 1.25rem; /* 20 */
+  --text-lg--line-height: 1.75rem;
+  --text-lg--letter-spacing: -0.02em;
+  --text-xl: 1.5rem; /* 24 */
+  --text-xl--line-height: 2rem;
+  --text-xl--letter-spacing: -0.03em;
+  --text-2xl: 2rem; /* 32 */
+  --text-2xl--line-height: 2.5rem;
+  --text-2xl--letter-spacing: -0.03em;
+  --text-3xl: 3rem; /* 48 */
+  --text-3xl--line-height: 3.25rem;
+  --text-3xl--letter-spacing: -0.035em;
+  --text-4xl: 4.5rem; /* 72 */
+  --text-4xl--line-height: 4.5rem;
+  --text-4xl--letter-spacing: -0.04em;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  --tracking-tight: -0.03em;
+  --tracking-normal: 0;
+  --tracking-label: 0.08em; /* uppercase buttons and eyebrows */
+
+  /* Shape: square by default. Pills only for chips/filters, full for icons. */
+  --radius-*: initial;
+  --radius-none: 0;
+  --radius-pill: 1.25rem;
+  --radius-full: 9999px;
+
+  /* Layout */
+  --breakpoint-3xl: 120rem; /* 1920 */
+  --container-page: 90rem; /* 1440: max content width */
+  --container-wide: 120rem; /* 1920: full-bleed media cap */
+  --container-prose: 40rem; /* 640: long-form copy, forms */
+
+  /* Media ratios */
+  --aspect-product: 3 / 4;
+  --aspect-portrait: 4 / 5;
+  --aspect-landscape: 16 / 9;
+
+  /* Motion: slow, eased, never bouncy. */
+  --ease-luxe: cubic-bezier(0.4, 0, 0.2, 1);
+  --default-transition-duration: 300ms;
+  --default-transition-timing-function: var(--ease-luxe);
+
+  --animate-dot-pulse: dot-pulse 1s var(--ease-luxe) infinite;
+  --animate-fade-in: fade-in 400ms var(--ease-luxe);
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes dot-pulse {
+    0%,
+    80%,
+    100% {
+      opacity: 0.2;
+      transform: scale(0.8);
+    }
+    40% {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Responsive layout variables (not utilities, so they live on :root). */
+:root {
+  --page-gutter: 1rem; /* 16 */
+  --section-space: 3rem; /* 48 */
+  --header-height: 3.5rem; /* 56 */
+  --grid-gap: 1px; /* hairline gutters between product tiles */
+}
+
+@media (width >= 48rem) {
+  :root {
+    --page-gutter: 2rem; /* 32 */
+    --section-space: 4rem; /* 64 */
+  }
+}
+
+@media (width >= 64rem) {
+  :root {
+    --page-gutter: 4rem; /* 64 */
+    --section-space: 5rem; /* 80 */
+    --header-height: 4.5rem; /* 72 */
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                               */
+/* ------------------------------------------------------------------ */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: var(--header-height);
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    letter-spacing: var(--text-base--letter-spacing);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: var(--font-weight-medium);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  hr {
+    border-color: var(--color-line);
+  }
+
+  ::selection {
+    background-color: var(--color-ink);
+    color: var(--color-white);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* Lock page scroll while a modal dialog is open. */
+  html:has(dialog[open]:modal) {
+    overflow: hidden;
+  }
+
+  /* Hide the native disclosure triangle; summaries draw their own icon. */
+  summary {
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout utilities                                                   */
+/* ------------------------------------------------------------------ */
+
+/* Centered content column with responsive side gutters. */
+@utility container-page {
+  width: 100%;
+  max-width: calc(var(--container-page) + var(--page-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
+/* Narrow column for copy, forms and checkout steps. */
+@utility container-prose {
+  width: 100%;
+  max-width: calc(var(--container-prose) + var(--page-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
+/* Edge-to-edge media and product grids, capped on ultra-wide screens. */
+@utility container-bleed {
+  width: 100%;
+  max-width: var(--container-wide);
+  margin-inline: auto;
+}
+
+@utility section-y {
+  padding-block: var(--section-space);
+}
+
+@utility gutter-x {
+  padding-inline: var(--page-gutter);
+}
+
+@utility pt-header {
+  padding-top: var(--header-height);
+}
+
+@utility h-header {
+  height: var(--header-height);
+}
+
+/* ------------------------------------------------------------------ */
+/* Type roles                                                         */
+/* ------------------------------------------------------------------ */
+
+/* Hero statements over imagery. */
+@utility type-display {
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+  letter-spacing: var(--text-2xl--letter-spacing);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+
+  @variant md {
+    font-size: var(--text-3xl);
+    line-height: var(--text-3xl--line-height);
+    letter-spacing: var(--text-3xl--letter-spacing);
+  }
+
+  @variant xl {
+    font-size: var(--text-4xl);
+    line-height: var(--text-4xl--line-height);
+    letter-spacing: var(--text-4xl--letter-spacing);
+  }
+}
+
+/* Page titles (category, product name on PDP). */
+@utility type-h1 {
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  letter-spacing: var(--text-xl--letter-spacing);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+
+  @variant lg {
+    font-size: var(--text-2xl);
+    line-height: var(--text-2xl--line-height);
+    letter-spacing: var(--text-2xl--letter-spacing);
+  }
+}
+
+/* Section titles. */
+@utility type-h2 {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  letter-spacing: var(--text-lg--letter-spacing);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+
+  @variant lg {
+    font-size: var(--text-xl);
+    line-height: var(--text-xl--line-height);
+    letter-spacing: var(--text-xl--letter-spacing);
+  }
+}
+
+/* Small uppercase titles: panel headers, footer columns. */
+@utility type-h3 {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  letter-spacing: var(--text-base--letter-spacing);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+@utility type-body {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  letter-spacing: var(--text-base--letter-spacing);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Default UI copy: product names, prices, filters, nav. */
+@utility type-body-sm {
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  letter-spacing: var(--text-xs--letter-spacing);
+  font-weight: var(--font-weight-regular);
+
+  @variant md {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    letter-spacing: var(--text-sm--letter-spacing);
+  }
+}
+
+@utility type-caption {
+  font-size: var(--text-2xs);
+  line-height: var(--text-2xs--line-height);
+  letter-spacing: var(--text-2xs--letter-spacing);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Uppercase micro-label: eyebrows, buttons, nav categories. */
+@utility type-label {
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  letter-spacing: var(--tracking-label);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------ */
+/* Links                                                              */
+/* ------------------------------------------------------------------ */
+
+/* Inline text link: always underlined, fades on hover. */
+@utility link {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition-property: opacity;
+  transition-duration: var(--default-transition-duration);
+  transition-timing-function: var(--ease-luxe);
+
+  &:hover {
+    opacity: 0.6;
+  }
+}
+
+/* Navigation link: no underline until hover/focus, which draws one in. */
+@utility link-reveal {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  padding-bottom: 2px;
+  transition-property: background-size;
+  transition-duration: var(--default-transition-duration);
+  transition-timing-function: var(--ease-luxe);
+
+  &:hover,
+  &:focus-visible,
+  &[aria-current="page"] {
+    background-size: 100% 1px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Buttons                                                            */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Square, uppercase, 1px border. On hover a fill sweeps in from the left
+ * and the colours invert. Compose: btn + one variant (+ optional size).
+ */
+@utility btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem; /* 48 */
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 0;
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  letter-spacing: var(--tracking-label);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  transition-property: color, border-color, background-color;
+  transition-duration: var(--default-transition-duration);
+  transition-timing-function: var(--ease-luxe);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--btn-sweep, transparent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 400ms var(--ease-luxe);
+  }
+
+  &:hover:not(:disabled, [aria-disabled="true"])::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    cursor: not-allowed;
+    color: var(--color-ink-disabled);
+    background-color: var(--color-surface);
+    border-color: var(--color-surface);
+  }
+}
+
+/* Solid black; inverts to white on hover. Main purchase actions. */
+@utility btn-primary {
+  --btn-sweep: var(--color-white);
+  background-color: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-white);
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    color: var(--color-ink);
+  }
+}
+
+/* Outlined; fills black on hover. Secondary actions. */
+@utility btn-secondary {
+  --btn-sweep: var(--color-ink);
+  background-color: transparent;
+  border-color: var(--color-line-strong);
+  color: var(--color-ink);
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    color: var(--color-white);
+  }
+}
+
+/* White outline for use over imagery; fills white on hover. */
+@utility btn-inverse {
+  --btn-sweep: var(--color-white);
+  background-color: transparent;
+  border-color: var(--color-white);
+  color: var(--color-white);
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    color: var(--color-ink);
+  }
+}
+
+/* Borderless text action, underlined. */
+@utility btn-text {
+  min-height: auto;
+  padding: 0;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    opacity: 0.6;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    background-color: transparent;
+    border-color: transparent;
+  }
+}
+
+@utility btn-sm {
+  min-height: 2.5rem; /* 40 */
+  padding: 0.5rem 1rem;
+}
+
+@utility btn-lg {
+  min-height: 3.5rem; /* 56 */
+  padding: 1rem 2rem;
+}
+
+/* Square icon-only button (cart, search, close). */
+@utility btn-icon {
+  min-height: 2.75rem; /* 44: touch target */
+  min-width: 2.75rem;
+  padding: 0.625rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Overlays                                                           */
+/* ------------------------------------------------------------------ */
+
+/* Modal <dialog>: square panel over a scrim, fades and rises in. */
+@utility dialog-panel {
+  margin: auto;
+  padding: 0;
+  border: 0;
+  max-width: none;
+  max-height: none;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  opacity: 0;
+  translate: 0 1rem;
+  transition-property: opacity, translate, overlay, display;
+  transition-duration: 300ms;
+  transition-timing-function: var(--ease-luxe);
+  transition-behavior: allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    translate: 0 0;
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 1rem;
+    }
+  }
+
+  &::backdrop {
+    background-color: var(--color-scrim);
+  }
+}
+
+/* Horizontal scrollers (mobile galleries) without a visible scrollbar. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Media                                                              */
+/* ------------------------------------------------------------------ */
+
+/* Neutral well behind product photography; images fill it. */
+@utility media-well {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-well);
+
+  & > img,
+  & > video,
+  & > picture {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
